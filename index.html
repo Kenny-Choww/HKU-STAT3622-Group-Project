@@ -619,6 +619,42 @@ function renderBarChart() {
   Plotly.react("barChart", [trace], layout, {responsive: true, displaylogo: false});
 }
 
+function hospitalMapView(selectedRows) {
+  const baseView = {
+    center: {lat: 22.35, lon: 114.16},
+    zoom: 9.2
+  };
+
+  // Only zoom the bubble map after a district has been selected from another chart/map.
+  if (!districtFilterActive() || !selectedRows || !selectedRows.length) return baseView;
+
+  const lats = selectedRows.map(r => Number(r.latitude)).filter(Number.isFinite);
+  const lons = selectedRows.map(r => Number(r.longitude)).filter(Number.isFinite);
+  if (!lats.length || !lons.length) return baseView;
+
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLon = Math.min(...lons);
+  const maxLon = Math.max(...lons);
+  const span = Math.max(maxLat - minLat, maxLon - minLon);
+
+  // Keep this as a very slight zoom-in only.
+  // Base zoom is 9.2, so selected views stay close to the original map scale.
+  let zoom = 9.45;
+  if (selectedRows.length <= 2 || span < 0.025) zoom = 9.75;
+  else if (span < 0.05) zoom = 9.65;
+  else if (span < 0.10) zoom = 9.55;
+  else if (span < 0.18) zoom = 9.45;
+
+  return {
+    center: {
+      lat: (minLat + maxLat) / 2,
+      lon: (minLon + maxLon) / 2
+    },
+    zoom
+  };
+}
+
 function renderHospitalMap() {
   const yr = filteredYearRows().filter(r => isNum(r.latitude) && isNum(r.longitude));
   let selected = yr;
@@ -665,7 +701,7 @@ function renderHospitalMap() {
       marker: {
         size: markerSize,
         color: selectedTrace ? arr.map(r => clusterColors[r.Cluster] || "#4e79a7") : "#94a3b8",
-        opacity: selectedTrace ? 0.86 : 0.22
+        opacity: selectedTrace ? 0.86 : 0.6
       },
       name: selectedTrace ? "Hospitals" : "Other districts",
       showlegend: false
@@ -677,12 +713,14 @@ function renderHospitalMap() {
   if (other.length) traces.push(...makeTraces(other, false));
   traces.push(...makeTraces(selected, true));
 
+  const mapView = hospitalMapView(selected);
+
   const layout = {
     ...baseLayout,
     mapbox: {
       style: "carto-positron",
-      center: {lat: 22.35, lon: 114.16},
-      zoom: 9.2
+      center: mapView.center,
+      zoom: mapView.zoom
     },
     legend: {orientation: "h", y: 0.02, x: 0.02, bgcolor: "rgba(255,255,255,0.72)"}
   };
