@@ -667,7 +667,8 @@ function renderHospitalMap() {
         color: selectedTrace ? arr.map(r => clusterColors[r.Cluster] || "#4e79a7") : "#94a3b8",
         opacity: selectedTrace ? 0.86 : 0.22
       },
-      name: selectedTrace ? "Hospitals" : "Other districts"
+      name: selectedTrace ? "Hospitals" : "Other districts",
+      showlegend: false
     };
     return selectedTrace ? [outlineTrace, markerTrace] : [markerTrace];
   };
