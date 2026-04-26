@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Public Hospital Pressure and Access in Hong Kong</title>
+  <title>Uneven Distribution, Pressure, and Inequity in Hong Kong's Public Hospitals</title>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <style>
     :root {
@@ -34,9 +34,10 @@
       position: relative;
     }
     .title-row {
-      min-height: 82px;
-      padding-right: 420px;
+      min-height: 150px;
+      padding-right: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       gap: 10px;
@@ -47,6 +48,14 @@
       line-height: 1.12;
       color: var(--blue);
       letter-spacing: -0.02em;
+      text-align: center;
+    }
+    .logo-filter-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
     }
     .title-icons {
       display: flex;
@@ -71,9 +80,8 @@
       outline-offset: 3px;
     }
     .controls {
-      position: absolute;
-      top: 14px;
-      right: 20px;
+      position: static;
+      margin-left: auto;
       display: flex;
       gap: 10px;
       align-items: flex-end;
@@ -262,9 +270,10 @@
       text-decoration: underline;
     }
     @media (max-width: 1180px) {
-      .title-row { padding-right: 0; align-items: flex-start; flex-direction: column; }
+      .title-row { padding-right: 0; align-items: stretch; flex-direction: column; }
+      .logo-filter-row { flex-direction: column; align-items: flex-start; }
       .title-icons { justify-content: flex-start; }
-      .controls { position: static; margin: 10px 0 12px; justify-content: flex-start; }
+      .controls { position: static; margin-left: 0; margin-top: 10px; justify-content: flex-start; }
       .kpis { grid-template-columns: repeat(2, 1fr); }
       .grid { grid-template-columns: 1fr; grid-template-rows: 430px 430px 430px 430px; }
     }
@@ -273,30 +282,32 @@
 <body>
   <div class="page">
     <div class="title-row">
-      <h1>Public Hospital Pressure and Access in Hong Kong</h1>
-      <div class="title-icons" aria-label="dashboard logos">
-        <a id="dashboardIconLink" href="https://data.gov.hk/" target="_blank" rel="noopener noreferrer" title="Open DATA.GOV.HK source">
-          <img id="dashboardIcon" alt="DATA.GOV.HK source logo"/>
-        </a>
-        <a id="haLogoLink" href="https://data.gov.hk/en-datasets/provider/hospital" target="_blank" rel="noopener noreferrer" title="Open CSDI / Hospital Authority source">
-          <img id="haLogo" alt="Hospital Authority source logo"/>
-        </a>
-      </div>
-    </div>
+      <h1>Uneven Distribution, Pressure, and Inequity in Hong Kong's Public Hospitals</h1>
+      <div class="logo-filter-row">
+        <div class="title-icons" aria-label="dashboard logos">
+          <a id="dashboardIconLink" href="https://data.gov.hk/" target="_blank" rel="noopener noreferrer" title="Open DATA.GOV.HK source">
+            <img id="dashboardIcon" alt="DATA.GOV.HK source logo"/>
+          </a>
+          <a id="haLogoLink" href="https://data.gov.hk/en-datasets/provider/hospital" target="_blank" rel="noopener noreferrer" title="Open CSDI / Hospital Authority source">
+            <img id="haLogo" alt="Hospital Authority source logo"/>
+          </a>
+        </div>
 
-    <div class="controls">
-      <div class="control-group">
-        <label for="yearSelect">Filter year</label>
-        <select id="yearSelect"></select>
-      </div>
-      <div class="control-group">
-        <label for="clusterDropdownBtn">Cluster filter</label>
-        <div class="multi-select" id="clusterDropdown">
-          <button type="button" id="clusterDropdownBtn" class="multi-select-button" aria-haspopup="true" aria-expanded="false">All clusters ▾</button>
-          <div id="clusterOptions" class="multi-select-options" role="menu" aria-label="Cluster filter options"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label for="yearSelect">Filter year</label>
+            <select id="yearSelect"></select>
+          </div>
+          <div class="control-group">
+            <label for="clusterDropdownBtn">Cluster filter</label>
+            <div class="multi-select" id="clusterDropdown">
+              <button type="button" id="clusterDropdownBtn" class="multi-select-button" aria-haspopup="true" aria-expanded="false">All clusters ▾</button>
+              <div id="clusterOptions" class="multi-select-options" role="menu" aria-label="Cluster filter options"></div>
+            </div>
+          </div>
+          <button id="resetBtn">Reset</button>
         </div>
       </div>
-      <button id="resetBtn">Reset</button>
     </div>
 
     <div class="kpis">
